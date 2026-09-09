@@ -1,0 +1,16 @@
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dev-dist/
+frontend/.env
+frontend/*.tsbuildinfo
+
+# backend
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.venv/
+backend/.env
+
+# OS
+.DS_Store
+Thumbs.db
