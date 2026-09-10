@@ -1,0 +1,914 @@
+/*
+ * ② 問診票確認画面（看護師・デスクトップ 1280×900）専用スタイル。
+ *
+ * Claude Design モックアップ NurseReview.dc.html のインラインCSSを
+ * そのまま移植している。数値（px・hex）はモックアップの実値であり、
+ * 見た目を変えるときは必ずモックアップ側と突き合わせること。
+ *
+ * レスポンシブ（AGENTS.md 5章）は 1280px 幅の見た目を基準としつつ、
+ * 狭い画面では 受付キュー → 非表示 / 右レール → 本体下へ回り込み で崩れを防ぐ。
+ */
+
+/* ============================================================
+   ルート（1280×900 の3カラム）
+   ============================================================ */
+.rv-root {
+  min-height: 100vh;
+  background: #f3f7f7;
+  color: #16292c;
+  font-family: var(--font-business);
+  display: flex;
+}
+
+/* ============================================================
+   左：受付キュー（flex 0 0 252px）
+   ============================================================ */
+.rv-queue {
+  flex: 0 0 252px;
+  background: #ffffff;
+  border-right: 1px solid #e2eaeb;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 16px;
+}
+
+.rv-queue-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rv-queue-brand-name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: #0b7c73;
+}
+
+.rv-queue-brand-dept {
+  margin-left: auto;
+  font-size: 11px;
+  color: #7c9498;
+}
+
+.rv-queue-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.rv-queue-tab {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 0 11px;
+  border-radius: 8px;
+  background: #eef3f3;
+  color: #5d7b80;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.rv-queue-error {
+  font-size: 12px;
+  color: #b3401f;
+  margin: 0;
+}
+
+.rv-queue-tab.is-active {
+  background: #16292c;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.rv-queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rv-queue-card {
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e2eaeb;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rv-queue-card.is-current {
+  background: #f0f9f7;
+  border: 1.5px solid #0e9e92;
+}
+
+.rv-queue-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rv-queue-card-id {
+  font-size: 15px;
+  font-weight: 700;
+  color: #3c5a5f;
+}
+
+.rv-queue-card.is-current .rv-queue-card-id {
+  color: #16292c;
+}
+
+.rv-queue-card-time {
+  font-size: 11px;
+  color: #8da4a8;
+}
+
+.rv-queue-card.is-current .rv-queue-card-time {
+  font-weight: 700;
+  color: #0b7c73;
+}
+
+.rv-queue-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #7c9498;
+}
+
+.rv-queue-card.is-current .rv-queue-card-meta {
+  color: #4e7076;
+}
+
+.rv-queue-chip {
+  height: 24px;
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 5px;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: #eef3f3;
+  color: #5d7b80;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.rv-queue-chip.is-draft {
+  background: #fdf3de;
+  color: #97690a;
+}
+
+.rv-queue-langs {
+  margin-top: auto;
+  border-radius: 12px;
+  background: #f6f9f9;
+  border: 1px solid #e2eaeb;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rv-queue-langs-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #3c5a5f;
+}
+
+.rv-queue-langs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.rv-queue-lang {
+  font-size: 11px;
+  color: #5d7b80;
+  background: #ffffff;
+  border: 1px solid #e2eaeb;
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+
+/* ============================================================
+   中央：本体
+   ============================================================ */
+.rv-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* --- ヘッダー --- */
+.rv-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2eaeb;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rv-header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.rv-header-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rv-title {
+  margin: 0;
+  font-family: var(--font-character);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.rv-title-id {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0b7c73;
+}
+
+.rv-header-meta {
+  margin: 0;
+  font-size: 12.5px;
+  color: #6c8a8f;
+}
+
+.rv-header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ヘッダーの小ボタン（音声を再生／対訳を並べて表示） */
+.rv-hbtn {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 13px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #dde6e7;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3c5a5f;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.rv-hbtn:disabled {
+  cursor: not-allowed;
+  color: #8da4a8;
+}
+
+.rv-switch {
+  width: 30px;
+  height: 17px;
+  border-radius: 999px;
+  background: #0e9e92;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 2px;
+  flex: 0 0 auto;
+}
+
+.rv-switch.is-off {
+  background: #c9d8d9;
+  justify-content: flex-start;
+}
+
+.rv-switch-knob {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* --- 問診票本体（行リスト） --- */
+.rv-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 14px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rv-row {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr) 40px;
+  gap: 14px;
+  align-items: start;
+  background: #ffffff;
+  border: 1px solid #e2eaeb;
+  border-radius: 12px;
+  padding: 11px 14px;
+}
+
+.rv-row.is-review {
+  background: #fef9ee;
+  border: 1.5px solid #e8c476;
+}
+
+.rv-row-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rv-row.is-review .rv-row-label {
+  gap: 6px;
+}
+
+.rv-label-ja {
+  font-size: 13px;
+  font-weight: 700;
+  color: #3c5a5f;
+}
+
+.rv-label-en {
+  font-size: 10.5px;
+  color: #9bb0b3;
+}
+
+.rv-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.rv-text {
+  font-size: 15.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.rv-source {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.rv-source-tag {
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 700;
+  color: #7c9498;
+  background: #f1f5f5;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+
+.rv-row.is-review .rv-source-tag {
+  background: #f3ebda;
+}
+
+.rv-source-text {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #7c9498;
+  word-break: break-word;
+}
+
+.rv-row.is-review .rv-source-text {
+  color: #8a7a5c;
+}
+
+.rv-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #97690a;
+  line-height: 1.5;
+}
+
+/* 重症度（モックアップの「痛みの程度」行の数値スケール表現を流用） */
+.rv-scale {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rv-scale-value {
+  font-size: 15.5px;
+  font-weight: 700;
+}
+
+.rv-scale-track {
+  flex: 1 1 auto;
+  height: 8px;
+  border-radius: 4px;
+  background: #edf2f2;
+  overflow: hidden;
+  max-width: 260px;
+  min-width: 120px;
+}
+
+.rv-scale-fill {
+  height: 8px;
+  border-radius: 4px;
+  background: #e8735a;
+}
+
+.rv-scale-note {
+  font-size: 12.5px;
+  color: #7c9498;
+}
+
+.rv-scale-empty {
+  font-size: 12.5px;
+  color: #9bb0b3;
+}
+
+/* 行の編集ボタン（34×34の鉛筆） */
+.rv-row-edit {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid #e2eaeb;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.rv-row.is-review .rv-row-edit {
+  background: #e8c476;
+  border-color: #e8c476;
+}
+
+.rv-row-edit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.rv-row-edit.is-editing {
+  background: #0b7c73;
+  border-color: #0b7c73;
+}
+
+/* 行の編集フォーム */
+.rv-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rv-edit-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #7c9498;
+}
+
+.rv-edit-textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 15.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #16292c;
+  background: #ffffff;
+  border: 1px solid #cbd8d9;
+  border-radius: 9px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.rv-edit-select {
+  font-family: inherit;
+  font-size: 13px;
+  color: #3c5a5f;
+  background: #ffffff;
+  border: 1px solid #cbd8d9;
+  border-radius: 9px;
+  padding: 7px 10px;
+  align-self: flex-start;
+  min-width: 140px;
+}
+
+.rv-edit-textarea:focus,
+.rv-edit-select:focus,
+.rv-memo-input:focus {
+  outline: 2px solid #0e9e92;
+  outline-offset: 1px;
+}
+
+/* --- フッター（アクションバー） --- */
+.rv-footer {
+  background: #ffffff;
+  border-top: 1px solid #e2eaeb;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rv-footer-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #6c8a8f;
+  max-width: 420px;
+  line-height: 1.5;
+}
+
+.rv-footer-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rv-message {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0b7c73;
+}
+
+.rv-message.is-error {
+  color: #c9532f;
+}
+
+/* 共通Buttonコンポーネントの見た目をモックアップの寸法に合わせる */
+.rv-root .rv-btn-secondary {
+  height: 46px;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #dde6e7;
+  font-size: 14px;
+  font-weight: 500;
+  color: #3c5a5f;
+  white-space: nowrap;
+}
+
+.rv-root .rv-btn-primary {
+  height: 46px;
+  min-height: 46px;
+  gap: 9px;
+  padding: 0 22px;
+  border-radius: 12px;
+  background: #0b7c73;
+  box-shadow: 0 6px 16px rgba(11, 124, 115, 0.28);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   右レール（flex 0 0 290px）
+   ============================================================ */
+.rv-rail {
+  flex: 0 0 290px;
+  background: #ffffff;
+  border-left: 1px solid #e2eaeb;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rv-rail-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rv-rail-author-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rv-rail-author-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.rv-rail-author-sub {
+  font-size: 11px;
+  color: #7c9498;
+}
+
+.rv-rail-divider {
+  height: 1px;
+  background: #edf2f2;
+}
+
+.rv-rail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rv-rail-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #3c5a5f;
+}
+
+.rv-rail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rv-rail-chip {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0b7c73;
+  background: #e7f5f2;
+  border-radius: 7px;
+  padding: 5px 9px;
+}
+
+.rv-rail-chip.is-muted {
+  font-weight: 500;
+  color: #5d7b80;
+  background: #f1f5f5;
+}
+
+.rv-rail-note {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #9bb0b3;
+}
+
+.rv-audio-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rv-audio-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #f6f9f9;
+  border: 1px solid #e7eeee;
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+
+.rv-audio-play {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid #d6e1e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.rv-audio-play.is-active {
+  background: #0e9e92;
+  border-color: #0e9e92;
+}
+
+.rv-audio-label {
+  font-size: 12.5px;
+  color: #5d7b80;
+}
+
+.rv-audio-item.is-active .rv-audio-label {
+  font-weight: 500;
+  color: #3c5a5f;
+}
+
+.rv-audio-time {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: #8da4a8;
+}
+
+.rv-memo-section {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.rv-memo-input {
+  min-height: 74px;
+  border-radius: 10px;
+  border: 1px solid #e2eaeb;
+  background: #fbfdfd;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #16292c;
+  resize: vertical;
+  width: 100%;
+}
+
+.rv-memo-input::placeholder {
+  color: #b3c4c6;
+}
+
+.rv-memo-input:disabled {
+  color: #5d7b80;
+  resize: none;
+}
+
+.rv-memo-source {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #9bb0b3;
+  word-break: break-word;
+}
+
+.rv-rail-next {
+  margin-top: auto;
+  border-radius: 10px;
+  background: #f0f9f7;
+  border: 1px solid #cbe7e1;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rv-rail-next-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0b7c73;
+}
+
+.rv-rail-next-text {
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #4e7076;
+}
+
+.rv-rail-pdf {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* ============================================================
+   バッジ（共通Badgeコンポーネントの形だけモックアップに合わせる）
+   色は Badge 側（--color-warning / --color-warning-bg 等）を使う
+   ============================================================ */
+.rv-root .rv-badge-header {
+  height: 26px;
+  gap: 6px;
+  padding: 0 10px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rv-root .rv-badge-row {
+  height: 22px;
+  align-self: flex-start;
+  gap: 4px;
+  padding: 0 7px;
+  border-radius: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  background: #f5dfae;
+  color: #7e5606;
+}
+
+/* ============================================================
+   読み込み中・エラー
+   ============================================================ */
+.rv-state {
+  min-height: 100vh;
+  background: #f3f7f7;
+  color: #16292c;
+  font-family: var(--font-business);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.rv-state-panel {
+  background: #ffffff;
+  border: 1px solid #e2eaeb;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  max-width: 420px;
+}
+
+.rv-state-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4e7076;
+}
+
+.rv-state-text.is-error {
+  color: #c9532f;
+}
+
+/* ============================================================
+   レスポンシブ
+   ============================================================ */
+@media (max-width: 1180px) {
+  .rv-root {
+    flex-direction: column;
+  }
+
+  /* 受付キューはデモ表示のため、狭い画面では隠す */
+  .rv-queue {
+    display: none;
+  }
+
+  .rv-rail {
+    flex: 1 1 auto;
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #e2eaeb;
+  }
+
+  .rv-rail-next {
+    margin-top: 0;
+  }
+
+  .rv-body {
+    overflow-y: visible;
+  }
+}
+
+@media (max-width: 860px) {
+  .rv-header {
+    flex-wrap: wrap;
+  }
+
+  .rv-header-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .rv-footer {
+    flex-wrap: wrap;
+  }
+
+  .rv-footer-actions {
+    margin-left: 0;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .rv-header,
+  .rv-body,
+  .rv-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .rv-row {
+    grid-template-columns: minmax(0, 1fr) 40px;
+  }
+
+  .rv-row-label {
+    grid-column: 1;
+  }
+
+  .rv-row-main {
+    grid-column: 1 / -1;
+  }
+
+  .rv-footer-actions .rv-btn-secondary,
+  .rv-footer-actions .rv-btn-primary {
+    flex: 1 1 auto;
+  }
+}

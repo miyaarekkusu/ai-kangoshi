@@ -1,0 +1,84 @@
+:root {
+  --color-primary: #0e9e92;
+  --color-primary-dark: #0b7c73;
+  --color-primary-darker: #075f58;
+  --color-primary-deep: #17a79c;
+  --color-accent: #e8735a;
+  --color-accent-light: #f0836a;
+
+  --color-background-patient: #f1f8f5;
+  --color-background-staff: #f3f7f7;
+  --color-background: var(--color-background-staff);
+  --color-surface: #ffffff;
+  --color-surface-tint: #e4f4f0;
+
+  --color-border: #e2eaeb;
+  --color-border-soft: #d6e7e2;
+
+  --color-text-primary: #16292c;
+  --color-text-secondary: #4e7076;
+  --color-text-muted: #7c9498;
+  --color-text-on-primary: #ffffff;
+
+  --color-warning: #97690a;
+  --color-warning-bg: #fdf3de;
+  --color-danger: #c9532f;
+  --color-danger-bg: #fdeee9;
+
+  --color-panel-dark: #16292c;
+  --color-panel-dark-deep: #12292e;
+
+  --font-character: "Zen Maru Gothic", "Zen Kaku Gothic New", sans-serif;
+  --font-business: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  --touch-min: 44px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-business);
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* 横スクロールはページ全体で発生させない。表・図など幅の広い要素は
+   個別コンテナに overflow-x: auto を付けること（AGENTS.md 5章 レスポンシブ要件） */
+body {
+  overflow-x: hidden;
+}

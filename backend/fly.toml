@@ -1,0 +1,17 @@
+# flyctl launch で生成される内容の叩き台。実際のapp名はflyctl launch時に確定する。
+app = "nurselink-ai-backend"
+primary_region = "nrt"
+
+[build]
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = false   # 通訳モードのWebSocket接続を維持するため自動停止しない（AGENTS.md 5章）
+  auto_start_machines = true
+  min_machines_running = 1
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256

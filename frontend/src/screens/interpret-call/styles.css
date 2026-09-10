@@ -1,0 +1,492 @@
+/**
+ * ③ 通訳呼び出し画面（看護師・タブレット/デスクトップ）
+ * Claude Design モックアップ実ソース scratchpad/nurselink/Interpreter.dc.html（1024x768）の
+ * インラインCSSをそのまま移植している。数値・hex値を変更する場合はモックアップ側と
+ * 整合を取ること。960px未満では左右2カラムを縦積みに切り替える（AGENTS.md 5章）。
+ */
+
+.interpret-call {
+  min-height: 100dvh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background-staff);
+  color: var(--color-text-primary);
+  font-family: var(--font-business);
+}
+
+/* ---- ヘッダー ---- */
+.interpret-call__header {
+  flex: 0 0 auto;
+  min-height: 58px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 22px;
+  flex-wrap: wrap;
+}
+
+.interpret-call__brand {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--color-primary-dark);
+}
+
+.interpret-call__rule {
+  width: 1px;
+  height: 18px;
+  background: var(--color-border);
+}
+
+.interpret-call__rule--sm {
+  height: 14px;
+}
+
+.interpret-call__header-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #3c5a5f;
+}
+
+.interpret-call__header-meta {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* ---- 本体：左右2カラム ---- */
+.interpret-call__body {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 22px;
+  padding: 24px 24px 26px;
+  min-height: 0;
+}
+
+/* ---- 左：キャラクター＋起動 ---- */
+.interpret-call__left {
+  flex: 0 0 372px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 24px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.interpret-call__stage {
+  width: 100%;
+  height: 226px;
+  border-radius: 16px;
+  background: radial-gradient(120% 100% at 50% 25%, #e3f5f0 0%, #d3ede6 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.interpret-call__headline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+}
+
+.interpret-call__headline-title {
+  margin: 0;
+  font-family: var(--font-character);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+
+.interpret-call__headline-sub {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.interpret-call__cta {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.interpret-call__start {
+  height: 66px;
+  border: none;
+  border-radius: 16px;
+  background: var(--color-primary);
+  box-shadow: 0 10px 22px rgba(14, 158, 146, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  color: var(--color-text-on-primary);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.interpret-call__start:active {
+  transform: scale(0.98);
+}
+
+.interpret-call__start-label {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.interpret-call__note {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #8da4a8;
+  text-align: center;
+}
+
+/* ---- 右：設定カード群 ---- */
+.interpret-call__right {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.interpret-call__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.interpret-call__card--language {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.interpret-call__card--output {
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+}
+
+.interpret-call__card-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.interpret-call__card-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #3c5a5f;
+}
+
+/* ---- 対象の患者 ---- */
+.interpret-call__pill {
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: #e7f5f2;
+  color: var(--color-primary-dark);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.interpret-call__pill--muted {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.interpret-call__pill--warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.interpret-call__patient {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #f0f9f7;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 12px;
+  padding: 13px 14px;
+  flex-wrap: wrap;
+}
+
+.interpret-call__patient--empty {
+  background: #fbfdfd;
+  border-color: var(--color-border);
+}
+
+.interpret-call__patient-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.interpret-call__patient-id {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.interpret-call__patient-meta {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.interpret-call__handover {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.interpret-call__handover-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #3c5a5f;
+}
+
+.interpret-call__switch {
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 3px;
+  transition: background-color 0.15s ease;
+}
+
+.interpret-call__switch--off {
+  background: #c7d4d4;
+  justify-content: flex-start;
+}
+
+.interpret-call__switch-knob {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-surface);
+}
+
+/* ---- 通訳する言語 ---- */
+.interpret-call__lang-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.interpret-call__lang-hint {
+  font-size: 11.5px;
+  color: #9bb0b3;
+}
+
+.interpret-call__lang-auto {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+.interpret-call__lang-grid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.interpret-call__lang {
+  border-radius: 12px;
+  background: #fbfdfd;
+  border: 1px solid var(--color-border);
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.interpret-call__lang.is-selected {
+  background: #e7f5f2;
+  border: 2px solid var(--color-primary);
+}
+
+.interpret-call__lang-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #3c5a5f;
+}
+
+.interpret-call__lang.is-selected .interpret-call__lang-name {
+  color: var(--color-primary-dark);
+}
+
+.interpret-call__lang-ja {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+
+.interpret-call__lang.is-selected .interpret-call__lang-ja {
+  color: var(--color-text-secondary);
+}
+
+.interpret-call__lang--more {
+  border: 1px dashed #c3d4d4;
+  cursor: not-allowed;
+}
+
+.interpret-call__lang--more .interpret-call__lang-name {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.interpret-call__lang--more .interpret-call__lang-ja {
+  color: #9bb0b3;
+}
+
+/* ---- 出力先・字幕サイズ ---- */
+.interpret-call__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.interpret-call__seg {
+  display: flex;
+  gap: 7px;
+}
+
+.interpret-call__seg-btn {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 13px;
+  border-radius: 10px;
+  background: #fbfdfd;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.interpret-call__seg-btn.is-active {
+  background: var(--color-panel-dark);
+  border-color: var(--color-panel-dark);
+  color: var(--color-text-on-primary);
+  font-weight: 700;
+}
+
+.interpret-call__seg-btn--size {
+  width: 44px;
+  justify-content: center;
+  padding: 0;
+  font-size: 12px;
+}
+
+.interpret-call__seg-btn--md {
+  font-size: 14px;
+}
+
+.interpret-call__seg-btn--lg {
+  font-size: 16px;
+}
+
+.interpret-call__vrule {
+  width: 1px;
+  height: 52px;
+  background: #edf2f2;
+  flex: 0 0 auto;
+}
+
+.interpret-call__recent {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: right;
+}
+
+.interpret-call__recent-label {
+  font-size: 11.5px;
+  color: #9bb0b3;
+}
+
+.interpret-call__recent-value {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+/* ---- レスポンシブ：960px未満は縦積み ---- */
+@media (max-width: 960px) {
+  .interpret-call__body {
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .interpret-call__left {
+    flex: 0 0 auto;
+  }
+
+  .interpret-call__card--output {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .interpret-call__vrule {
+    display: none;
+  }
+
+  .interpret-call__recent {
+    margin-left: 0;
+    text-align: left;
+  }
+}
+
+@media (max-width: 520px) {
+  .interpret-call__header {
+    padding: 10px 14px;
+  }
+
+  .interpret-call__header-meta {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .interpret-call__lang-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,1028 @@
+/*
+ * ④ 診察通訳画面（医師・患者）専用スタイル。
+ *
+ * Claude Design モックアップ実物 scratchpad/nurselink/Consultation.dc.html
+ * （1440×900・大画面）のインラインCSSをそのまま移植したもの。
+ * 配色hex・余白・フォントサイズ・角丸は原則モックアップの値をそのまま使う
+ * （トークン化されている色は var(--color-*) に置き換えるが値は同一）。
+ *
+ * モックアップは固定1440×900だが、AGENTS.md 5章のレスポンシブ必須要件に従い
+ * 末尾にブレークポイントを足して狭い画面でも崩れないようにしている。
+ */
+
+/* ===== 画面全体 ===== */
+.interpret-session-screen {
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-background-staff);
+  color: var(--color-text-primary);
+  font-family: var(--font-business);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== ヘッダー（68px・白・下境界線） ===== */
+.interpret-header {
+  flex: 0 0 68px;
+  height: 68px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 24px;
+}
+
+.interpret-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.interpret-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  animation: interpret-live 1.6s ease-in-out infinite;
+}
+
+.interpret-status.is-connecting .interpret-status-dot {
+  background: var(--color-warning);
+}
+
+.interpret-status.is-disconnected .interpret-status-dot {
+  background: var(--color-danger);
+  animation: none;
+}
+
+.interpret-status-label {
+  font-family: var(--font-character);
+  font-size: 19px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.interpret-header-divider {
+  width: 1px;
+  height: 22px;
+  background: var(--color-border);
+  flex: 0 0 auto;
+}
+
+.interpret-header-ids {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.interpret-patient-id {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  white-space: nowrap;
+}
+
+.interpret-chip {
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  border-radius: 7px;
+  background: #eef3f3;
+  color: #3c5a5f;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.interpret-chip-teal {
+  background: #e7f5f2;
+  color: var(--color-primary-dark);
+}
+
+.interpret-header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.interpret-elapsed {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #6c8a8f;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.interpret-ghost-button {
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: 11px;
+  background: var(--color-surface);
+  border: 1px solid #dde6e7;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #3c5a5f;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.interpret-ghost-button:hover {
+  background: #f6f9f9;
+}
+
+.interpret-end-button {
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 18px;
+  border-radius: 11px;
+  background: var(--color-panel-dark);
+  color: var(--color-text-on-primary);
+  border: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.interpret-end-button:hover {
+  background: #0d1f22;
+}
+
+/* ===== 本体（会話パネル＋問診サマリー） ===== */
+.interpret-main {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 18px;
+  padding: 18px 24px 20px;
+  min-height: 0;
+}
+
+.interpret-conversation-column {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ===== 会話パネル（暗い面 #12292E） ===== */
+.interpret-conversation {
+  flex: 1 1 auto;
+  background: var(--color-panel-dark-deep);
+  border-radius: 20px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.interpret-yui-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  flex: 0 0 auto;
+}
+
+.interpret-yui-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.interpret-yui-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #eaf6f4;
+}
+
+.interpret-yui-sub {
+  font-size: 12px;
+  color: #8fb0b0;
+}
+
+.interpret-wave {
+  margin-left: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 26px;
+  flex: 0 0 auto;
+}
+
+.interpret-wave span {
+  width: 4px;
+  height: 26px;
+  border-radius: 2px;
+  background: #4ecbb8;
+  transform-origin: center;
+  animation: interpret-wave 0.9s ease-in-out infinite;
+}
+
+.interpret-wave span:nth-child(1) {
+  animation-delay: 0s;
+}
+.interpret-wave span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.interpret-wave span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+.interpret-wave span:nth-child(4) {
+  animation-delay: 0.36s;
+}
+.interpret-wave span:nth-child(5) {
+  animation-delay: 0.48s;
+}
+.interpret-wave span:nth-child(6) {
+  animation-delay: 0.6s;
+}
+
+/* 通信断・一時停止中は波形を止める（モックアップは常時アニメーション） */
+.interpret-wave.is-idle span {
+  animation-play-state: paused;
+  transform: scaleY(0.3);
+  background: #35636b;
+}
+
+/* 接続断バナー（モックアップには無い。AGENTS.md 5章の通信不安定対応） */
+.interpret-banner {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: rgba(232, 115, 90, 0.14);
+  border: 1px solid rgba(232, 115, 90, 0.45);
+}
+
+.interpret-banner p {
+  margin: 0;
+  flex: 1 1 220px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #ffd9cd;
+}
+
+.interpret-banner-button {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: transparent;
+  color: #ffefe9;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.interpret-banner-button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* ===== 字幕（吹き出し） ===== */
+.interpret-bubble-list {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
+
+.interpret-empty {
+  margin: auto;
+  max-width: 420px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #8fb0b0;
+}
+
+.interpret-bubble {
+  max-width: 78%;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.interpret-bubble-doctor {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 16px 16px 16px 5px;
+}
+
+.interpret-bubble-patient {
+  align-self: flex-end;
+  background: rgba(232, 115, 90, 0.13);
+  border-radius: 16px 16px 5px 16px;
+}
+
+.interpret-bubble-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.interpret-bubble-patient .interpret-bubble-head {
+  justify-content: flex-end;
+}
+
+.interpret-bubble-speaker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.interpret-bubble-doctor .interpret-bubble-speaker {
+  color: #7fe0d2;
+}
+
+.interpret-bubble-patient .interpret-bubble-speaker {
+  color: #f4a28c;
+  text-align: right;
+}
+
+.interpret-tts-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.interpret-bubble-original {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.interpret-bubble-translated {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.interpret-bubble-doctor .interpret-bubble-original {
+  color: #f2faf9;
+}
+
+.interpret-bubble-doctor .interpret-bubble-translated {
+  color: #9ebfbf;
+}
+
+.interpret-bubble-patient .interpret-bubble-original {
+  color: #f7f4f2;
+  text-align: right;
+}
+
+.interpret-bubble-patient .interpret-bubble-translated {
+  color: #c3b2aa;
+  text-align: right;
+}
+
+/* 読み上げ中（最新の発話）の強調。
+   患者側はモックアップの塗り #E8735A をそのまま使用。
+   医師側はモックアップに該当セルが無いため、同じ構成でブランドのティールに置換。 */
+.interpret-bubble.is-speaking {
+  padding: 13px 16px;
+}
+
+.interpret-bubble-patient.is-speaking {
+  background: var(--color-accent);
+  box-shadow: 0 10px 26px rgba(232, 115, 90, 0.28);
+}
+
+.interpret-bubble-patient.is-speaking .interpret-bubble-speaker,
+.interpret-bubble-patient.is-speaking .interpret-tts-badge {
+  color: #ffefe9;
+}
+
+.interpret-bubble-patient.is-speaking .interpret-bubble-original {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.interpret-bubble-patient.is-speaking .interpret-bubble-translated {
+  font-size: 16px;
+  color: #ffe2d8;
+}
+
+.interpret-bubble-doctor.is-speaking {
+  background: var(--color-primary-deep);
+  box-shadow: 0 10px 26px rgba(23, 167, 156, 0.26);
+}
+
+.interpret-bubble-doctor.is-speaking .interpret-bubble-speaker,
+.interpret-bubble-doctor.is-speaking .interpret-tts-badge {
+  color: #e2fbf6;
+}
+
+.interpret-bubble-doctor.is-speaking .interpret-bubble-original {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.interpret-bubble-doctor.is-speaking .interpret-bubble-translated {
+  font-size: 16px;
+  color: #d5f3ee;
+}
+
+/* ===== 操作エリア ===== */
+.interpret-controls {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.interpret-mic-row {
+  display: flex;
+  gap: 14px;
+}
+
+.interpret-mic {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 88px;
+  padding: 0 12px;
+  border-radius: 18px;
+  background: var(--color-surface);
+  border: 1.5px solid #dde6e7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.interpret-mic:hover:not(:disabled):not(.is-active) {
+  border-color: var(--color-primary);
+}
+
+.interpret-mic:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.interpret-mic-icon {
+  width: 50px;
+  height: 50px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #eef3f3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.interpret-mic-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  min-width: 0;
+}
+
+.interpret-mic-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #3c5a5f;
+}
+
+.interpret-mic-sub {
+  font-size: 12px;
+  color: #8da4a8;
+}
+
+/* 入力中（＝モックアップの「録音中…」状態）はコーラルの塗り */
+.interpret-mic.is-active {
+  background: var(--color-accent);
+  border-color: transparent;
+  box-shadow: 0 10px 22px rgba(232, 115, 90, 0.3);
+}
+
+.interpret-mic.is-active .interpret-mic-icon {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.interpret-mic.is-active .interpret-mic-title {
+  color: #ffffff;
+}
+
+.interpret-mic.is-active .interpret-mic-sub {
+  color: #ffe2d8;
+}
+
+/* 発話入力（STT未実装のための暫定テキスト入力。モックアップには無い要素） */
+.interpret-composer {
+  background: var(--color-surface);
+  border: 1.5px solid #dde6e7;
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.interpret-composer-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.interpret-textarea {
+  width: 100%;
+  border: 1px solid #dde6e7;
+  border-radius: 12px;
+  background: #f6f9f9;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  resize: vertical;
+}
+
+.interpret-textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.interpret-composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.interpret-send {
+  height: 42px;
+  padding: 0 20px;
+  border-radius: 11px;
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.interpret-send.is-accent {
+  background: var(--color-accent);
+}
+
+.interpret-send:disabled {
+  background: #c3d4d5;
+  cursor: not-allowed;
+}
+
+.interpret-cancel {
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 11px;
+  background: var(--color-surface);
+  border: 1px solid #dde6e7;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #3c5a5f;
+  cursor: pointer;
+}
+
+.interpret-blocked-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--color-danger);
+}
+
+/* 定型文 */
+.interpret-phrase-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.interpret-phrase-label {
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.interpret-phrase {
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 13px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  border: 1px solid #dde6e7;
+  font-family: inherit;
+  font-size: 13px;
+  color: #3c5a5f;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.interpret-phrase:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+}
+
+.interpret-phrase:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.interpret-disclaimer {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #8da4a8;
+}
+
+/* ===== 問診サマリー（右336px・常時表示） ===== */
+.interpret-summary {
+  flex: 0 0 336px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.interpret-summary-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  flex: 0 0 auto;
+}
+
+.interpret-summary-title {
+  margin: 0;
+  font-family: var(--font-character);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.interpret-badge {
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 6px;
+  background: #e7f5f2;
+  color: var(--color-primary-dark);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.interpret-badge-warn {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.interpret-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.interpret-field {
+  background: #f6f9f9;
+  border-radius: 12px;
+  padding: 11px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.interpret-field.is-review {
+  background: var(--color-danger-bg);
+}
+
+.interpret-field-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.interpret-field-value {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.interpret-field-value-plain {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.interpret-field-sub {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.interpret-severity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.interpret-severity-value {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.interpret-meter {
+  flex: 1 1 auto;
+  height: 7px;
+  border-radius: 4px;
+  background: #e4ebeb;
+  overflow: hidden;
+}
+
+.interpret-meter-fill {
+  height: 7px;
+  border-radius: 4px;
+  background: var(--color-accent);
+}
+
+.interpret-review-flag {
+  align-self: flex-start;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 7px;
+  border-radius: 6px;
+  background: #fbe4de;
+  color: var(--color-danger);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.interpret-summary-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.interpret-summary-error {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.interpret-summary-error p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-danger);
+}
+
+.interpret-retry {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  border: 1px solid #dde6e7;
+  font-family: inherit;
+  font-size: 13px;
+  color: #3c5a5f;
+  cursor: pointer;
+}
+
+.interpret-summary-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding-top: 4px;
+}
+
+.interpret-summary-toggle {
+  width: 100%;
+  height: 42px;
+  border-radius: 11px;
+  background: var(--color-surface);
+  border: 1px solid #dde6e7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #3c5a5f;
+  cursor: pointer;
+}
+
+.interpret-summary-toggle:hover:not(:disabled) {
+  background: #f6f9f9;
+}
+
+.interpret-summary-toggle:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.interpret-privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: #8da4a8;
+}
+
+.interpret-privacy svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+/* ===== アニメーション（モックアップ .nl-live / .nl-w と同一） ===== */
+@keyframes interpret-live {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes interpret-wave {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interpret-status-dot,
+  .interpret-wave span {
+    animation: none;
+  }
+}
+
+/* ===== レスポンシブ（モックアップは1440固定。以下は本実装での追加） ===== */
+@media (max-width: 1180px) {
+  .interpret-session-screen {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .interpret-main {
+    flex-direction: column;
+  }
+
+  .interpret-conversation {
+    min-height: 420px;
+  }
+
+  .interpret-summary {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+
+  .interpret-summary-foot {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  .interpret-header {
+    flex: 0 0 auto;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  .interpret-header-divider {
+    display: none;
+  }
+
+  .interpret-header-actions {
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+
+  .interpret-main {
+    padding: 14px 16px 18px;
+  }
+
+  .interpret-bubble {
+    max-width: 92%;
+  }
+
+  .interpret-phrase-row {
+    flex-wrap: wrap;
+  }
+
+  .interpret-disclaimer {
+    margin-left: 0;
+    flex: 1 1 100%;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .interpret-status-label {
+    font-size: 17px;
+  }
+
+  .interpret-mic-row {
+    flex-direction: column;
+  }
+
+  .interpret-mic {
+    height: 76px;
+    justify-content: flex-start;
+    padding: 0 16px;
+  }
+
+  .interpret-bubble {
+    max-width: 100%;
+  }
+
+  .interpret-bubble-original,
+  .interpret-bubble.is-speaking .interpret-bubble-original {
+    font-size: 17px;
+  }
+
+  .interpret-bubble-translated,
+  .interpret-bubble.is-speaking .interpret-bubble-translated {
+    font-size: 14px;
+  }
+
+  .interpret-header-actions {
+    width: 100%;
+  }
+
+  .interpret-end-button,
+  .interpret-ghost-button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}

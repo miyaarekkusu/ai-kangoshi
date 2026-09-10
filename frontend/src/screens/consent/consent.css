@@ -1,0 +1,344 @@
+/*
+ * ⓪同意画面のスタイル。
+ * Claude Design モックアップ scratchpad/nurselink/Consent.dc.html（390×844）の
+ * インラインCSSをそのまま移植したもの。hex値・余白・フォントサイズは同ファイル準拠。
+ * 実機は幅可変なので、モックアップの 390px を最大幅とし中央寄せする
+ * （AGENTS.md 5章 レスポンシブ要件）。
+ */
+
+.consent-screen {
+  min-height: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 20px 20px;
+  background: var(--color-background-patient);
+  color: var(--color-text-primary);
+  font-family: var(--font-business);
+}
+
+/* ---------- ヘッダー ---------- */
+
+.consent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.consent-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.consent-brand__name {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-primary-dark);
+}
+
+.consent-current-lang {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-soft);
+  font-size: 12px;
+  font-weight: 700;
+  color: #37585e;
+  white-space: nowrap;
+}
+
+/* ---------- 言語選択チップ ---------- */
+
+.consent-lang-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* 端まで並べても画面端で切れて見えるようにパディング分を打ち消す */
+  margin: 0 -20px;
+  padding: 0 20px;
+}
+
+.consent-lang-row::-webkit-scrollbar {
+  display: none;
+}
+
+.consent-lang-chip {
+  flex: 0 0 auto;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-soft);
+  color: #46686e;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.consent-lang-chip.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  font-weight: 700;
+}
+
+/* ---------- ユイと吹き出し ---------- */
+
+.consent-yui-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.consent-yui {
+  flex: 0 0 auto;
+}
+
+.consent-bubble {
+  flex: 1 1 auto;
+  background: var(--color-surface);
+  border-radius: 18px 18px 18px 6px;
+  padding: 14px 16px;
+  box-shadow: 0 6px 18px rgba(19, 74, 73, 0.07);
+}
+
+.consent-bubble__main {
+  margin: 0;
+  font-family: var(--font-character);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--color-text-primary);
+  text-wrap: pretty;
+}
+
+.consent-bubble__sub {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #5d7b80;
+}
+
+/* ---------- 同意内容カード ---------- */
+
+.consent-card {
+  background: var(--color-surface);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 6px 20px rgba(19, 74, 73, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.consent-card__title {
+  margin: 0;
+  font-family: var(--font-character);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.consent-point {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.consent-point__icon {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.consent-point__icon--teal {
+  background: var(--color-surface-tint);
+}
+
+.consent-point__icon--warm {
+  background: var(--color-danger-bg);
+}
+
+.consent-point__text {
+  flex: 1 1 auto;
+}
+
+.consent-point__title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.consent-point__body {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #5d7b80;
+}
+
+/* ---------- 同意チェック ---------- */
+
+.consent-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 60px;
+  padding: 12px 14px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border-soft);
+  border-radius: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.consent-check.is-checked {
+  border-color: var(--color-primary);
+}
+
+.consent-check:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.consent-check__box {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: transparent;
+  border: 2px solid #c6d9d5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.consent-check__box svg {
+  opacity: 0;
+}
+
+.consent-check.is-checked .consent-check__box {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.consent-check.is-checked .consent-check__box svg {
+  opacity: 1;
+}
+
+.consent-check__label {
+  flex: 1 1 auto;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ---------- 下部アクション ---------- */
+
+.consent-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 4px;
+}
+
+.consent-error {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--color-danger);
+}
+
+.consent-primary-btn {
+  height: 58px;
+  border: none;
+  border-radius: 18px;
+  background: var(--color-primary);
+  box-shadow: 0 8px 18px rgba(14, 158, 146, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--color-text-on-primary);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+
+.consent-primary-btn:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.consent-primary-btn:disabled {
+  opacity: 0.42;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.consent-secondary-btn {
+  height: 48px;
+  border-radius: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.consent-secondary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.consent-note {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  padding: 0 2px;
+}
+
+.consent-note svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.consent-note p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: #8da4a8;
+}
+
+.consent-note--declined p {
+  color: var(--color-danger);
+}
+
+.consent-note--declined p + p {
+  margin-top: 4px;
+}
