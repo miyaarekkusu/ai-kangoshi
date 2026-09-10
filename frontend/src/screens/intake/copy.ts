@@ -32,6 +32,9 @@ export interface IntakeUiCopy {
   sendingEllipsis: string;
   approxMinutes: string;
   connectionError: string;
+  micPermissionError: string;
+  recordingHint: string;
+  transcribing: string;
 }
 
 export const UI_COPY: Record<LanguageCode, IntakeUiCopy> = {
@@ -57,7 +60,10 @@ export const UI_COPY: Record<LanguageCode, IntakeUiCopy> = {
     send: "Send",
     sendingEllipsis: "Sending…",
     approxMinutes: "~2 min",
-    connectionError: "Connection failed. Please check your network and try again."
+    connectionError: "Connection failed. Please check your network and try again.",
+    micPermissionError: "Couldn't access the microphone. Please allow microphone access in your browser settings.",
+    recordingHint: "Tap again to stop and send",
+    transcribing: "Converting speech to text…"
   },
   ja: {
     preparing: "問診を準備しています…",
@@ -81,7 +87,10 @@ export const UI_COPY: Record<LanguageCode, IntakeUiCopy> = {
     send: "送信",
     sendingEllipsis: "送信中…",
     approxMinutes: "約2分",
-    connectionError: "通信がうまくいきませんでした。電波の良い場所でもう一度お試しください。"
+    connectionError: "通信がうまくいきませんでした。電波の良い場所でもう一度お試しください。",
+    micPermissionError: "マイクを使用できませんでした。ブラウザの設定でマイクへのアクセスを許可してください。",
+    recordingHint: "もう一度タップすると終了して送信します",
+    transcribing: "音声をテキストに変換しています…"
   },
   "ja-easy": {
     preparing: "じゅんびを しています…",
@@ -105,7 +114,10 @@ export const UI_COPY: Record<LanguageCode, IntakeUiCopy> = {
     send: "そうしん",
     sendingEllipsis: "そうしんちゅう…",
     approxMinutes: "やく2ふん",
-    connectionError: "つうしんが うまく いきませんでした。でんぱの よい ばしょで もういちど ためしてください。"
+    connectionError: "つうしんが うまく いきませんでした。でんぱの よい ばしょで もういちど ためしてください。",
+    micPermissionError: "マイクが つかえませんでした。ブラウザの せっていで マイクを ゆるして ください。",
+    recordingHint: "もういちど タップすると おわって そうしんします",
+    transcribing: "こえを もじに して います…"
   },
   zh: {
     preparing: "正在准备问诊…",
@@ -129,7 +141,10 @@ export const UI_COPY: Record<LanguageCode, IntakeUiCopy> = {
     send: "发送",
     sendingEllipsis: "发送中…",
     approxMinutes: "约2分钟",
-    connectionError: "连接失败。请检查网络后重试。"
+    connectionError: "连接失败。请检查网络后重试。",
+    micPermissionError: "无法使用麦克风。请在浏览器设置中允许访问麦克风。",
+    recordingHint: "再次点击以结束并发送",
+    transcribing: "正在将语音转换为文字…"
   },
   vi: {
     preparing: "Đang chuẩn bị hỏi bệnh…",
@@ -153,7 +168,10 @@ export const UI_COPY: Record<LanguageCode, IntakeUiCopy> = {
     send: "Gửi",
     sendingEllipsis: "Đang gửi…",
     approxMinutes: "~2 phút",
-    connectionError: "Kết nối thất bại. Vui lòng kiểm tra mạng và thử lại."
+    connectionError: "Kết nối thất bại. Vui lòng kiểm tra mạng và thử lại.",
+    micPermissionError: "Không thể truy cập micro. Vui lòng cho phép truy cập micro trong cài đặt trình duyệt.",
+    recordingHint: "Chạm lại để dừng và gửi",
+    transcribing: "Đang chuyển giọng nói thành văn bản…"
   },
   ko: {
     preparing: "문진을 준비하고 있습니다…",
@@ -177,7 +195,10 @@ export const UI_COPY: Record<LanguageCode, IntakeUiCopy> = {
     send: "전송",
     sendingEllipsis: "전송 중…",
     approxMinutes: "약 2분",
-    connectionError: "연결에 실패했습니다. 네트워크 상태를 확인한 후 다시 시도해 주세요."
+    connectionError: "연결에 실패했습니다. 네트워크 상태를 확인한 후 다시 시도해 주세요.",
+    micPermissionError: "마이크를 사용할 수 없습니다. 브라우저 설정에서 마이크 접근을 허용해 주세요.",
+    recordingHint: "다시 탭하면 종료하고 전송합니다",
+    transcribing: "음성을 텍스트로 변환하고 있습니다…"
   },
   pt: {
     preparing: "Preparando sua triagem…",
@@ -201,7 +222,10 @@ export const UI_COPY: Record<LanguageCode, IntakeUiCopy> = {
     send: "Enviar",
     sendingEllipsis: "Enviando…",
     approxMinutes: "~2 min",
-    connectionError: "Falha na conexão. Verifique sua rede e tente novamente."
+    connectionError: "Falha na conexão. Verifique sua rede e tente novamente.",
+    micPermissionError: "Não foi possível acessar o microfone. Permita o acesso ao microfone nas configurações do navegador.",
+    recordingHint: "Toque novamente para parar e enviar",
+    transcribing: "Convertendo fala em texto…"
   }
 };
 

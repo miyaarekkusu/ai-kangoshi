@@ -1,5 +1,6 @@
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, HTTPException, WebSocket, WebSocketDisconnect
 
+from app.auth import verify_ws_token
 from app.services import llm
 
 router = APIRouter(tags=["interpret"])
@@ -19,13 +20,16 @@ def _label(code: str) -> str:
 
 
 @router.websocket("/ws/interpret/{session_id}")
-async def interpret_session(websocket: WebSocket, session_id: str, lang: str = "en"):
+async def interpret_session(websocket: WebSocket, session_id: str, lang: str = "en", token: str | None = None):
     """
     ④診察通訳画面向けの疑似リアルタイム通訳チャンネル。
     発話ブロック単位でメッセージを受け取り、翻訳結果を返す
     （AGENTS.md 2章：真のストリーミング型双方向通訳は実装しない）。
 
-    接続時にクエリパラメータ ?lang=<患者の言語コード> を渡すこと（デフォルト en）。
+    接続時にクエリパラメータ ?lang=<患者の言語コード>（デフォルト en）と
+    ?token=<看護師ログインのJWT> を渡すこと。ブラウザのWebSocketはカスタムヘッダーを
+    送れないため、認証トークンはクエリパラメータで受け取る（app/auth.py参照）。
+
     医師の発話（日本語）は lang へ、患者の発話（lang）は日本語へ翻訳する。
 
     受信メッセージ想定: {"speaker": "doctor" | "patient", "textOriginal": str}
@@ -34,6 +38,12 @@ async def interpret_session(websocket: WebSocket, session_id: str, lang: str = "
 
     翻訳はDeepseek API（app/services/llm.py）を使う。DEEPSEEK_API_KEY未設定時はモック翻訳。
     """
+    try:
+        verify_ws_token(token)
+    except HTTPException:
+        await websocket.close(code=4401)
+        return
+
     await websocket.accept()
     patient_language_label = _label(lang)
     try:

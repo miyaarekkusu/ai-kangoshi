@@ -1,0 +1,498 @@
+/*
+ * 使い方ガイド（マニュアル）画面のスタイル。
+ * Claude Design モックアップ実ソース（scratchpad/nurselink/Guide.dc.html）から
+ * 配色hex・余白・フォントサイズをそのまま写している。
+ * モックアップは 960×1180 の固定サイズだが、AGENTS.md 5章のレスポンシブ要件に従い
+ * 「スマホ＝縦積み／768px以上＝モックアップ通りの横並び」に切り替える。
+ * 幅960pxを上限として、それ以上は中央寄せ（モックアップより間延びさせない）。
+ */
+
+.manual-screen {
+  /* モックアップ内で使われている、design/tokens.ts に無いローカル色 */
+  --guide-step-bg: #f4faf8;
+  --guide-step-border: #ddeee9;
+  --guide-flow-bg: #f6fbfa;
+  --guide-help-bg: #fef6f3;
+  --guide-help-text: #a8452a;
+  --guide-help-sub: #b37c68;
+  --guide-langs: #8da4a8;
+  --guide-body: #5d7b80;
+  --guide-tag-gray-bg: #eef3f3;
+  --guide-tag-gray-text: #3c5a5f;
+  --guide-warn-bg: #fef9ee;
+  --guide-warn-border: #e8c476;
+  --guide-warn-chip-bg: #f5dfae;
+  --guide-warn-chip-text: #7e5606;
+  --guide-warn-text: #7e6538;
+  --guide-dark-symbol: #7fe0d2;
+  --guide-dark-title: #eaf6f4;
+  --guide-dark-desc: #9ebfbf;
+  --guide-note-bg: #f6f9f9;
+  --guide-note-border: #e4eded;
+  --guide-arrow: #b7cbcb;
+
+  min-height: 100%;
+  background: var(--color-background-patient);
+  color: var(--color-text-primary);
+  font-family: var(--font-business);
+}
+
+.manual-page {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px 16px 24px;
+}
+
+/* ---- ヘッダー ---- */
+
+.manual-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.manual-header-avatar {
+  flex: 0 0 auto;
+}
+
+.manual-header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.manual-header-title {
+  margin: 0;
+  font-family: var(--font-character);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.manual-header-sub {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.manual-brand {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.manual-brand-mark {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+
+.manual-brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--color-primary-dark);
+}
+
+/* ---- 白いパネル（患者向け／スタッフ向け共通） ---- */
+
+.manual-panel {
+  background: var(--color-surface);
+  border-radius: 22px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 8px 24px rgba(19, 74, 73, 0.05);
+}
+
+.manual-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.manual-panel-title {
+  margin: 0;
+  font-family: var(--font-character);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.manual-panel-note {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.manual-tag {
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.manual-tag--teal {
+  background: var(--color-surface-tint);
+  color: var(--color-primary-dark);
+}
+
+.manual-tag--gray {
+  background: var(--guide-tag-gray-bg);
+  color: var(--guide-tag-gray-text);
+}
+
+/* ---- 上段：患者向け4ステップ ---- */
+
+.manual-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.manual-step {
+  border-radius: 18px;
+  background: var(--guide-step-bg);
+  border: 1px solid var(--guide-step-border);
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  color: var(--color-primary-dark);
+}
+
+.manual-step--accent {
+  color: var(--color-danger);
+}
+
+.manual-step-no {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.manual-step--accent .manual-step-no {
+  background: var(--color-accent);
+}
+
+.manual-step-icon {
+  width: 66px;
+  height: 66px;
+}
+
+.manual-step-en {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--color-text-primary);
+}
+
+.manual-step-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.manual-step-langs {
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--guide-langs);
+}
+
+/* 困ったら呼ぶ帯 */
+
+.manual-help {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--guide-help-bg);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.manual-help-icon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  color: var(--color-danger);
+}
+
+.manual-help-en {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--guide-help-text);
+}
+
+.manual-help-ja {
+  margin-left: auto;
+  font-size: 12.5px;
+  color: var(--guide-help-sub);
+}
+
+/* ---- 下段：業務フロー ---- */
+
+.manual-flow {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.manual-flow-item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  min-width: 0;
+}
+
+.manual-flow-card {
+  flex: 1 1 auto;
+  border-radius: 14px;
+  padding: 13px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.manual-flow-card--default {
+  background: var(--guide-flow-bg);
+  border: 1px solid var(--guide-step-border);
+}
+
+.manual-flow-card--highlight {
+  background: var(--guide-warn-bg);
+  border: 1.5px solid var(--guide-warn-border);
+}
+
+.manual-flow-card--dark {
+  background: var(--color-panel-dark-deep);
+}
+
+.manual-flow-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.manual-flow-symbol {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.manual-flow-card--highlight .manual-flow-symbol {
+  color: var(--color-warning);
+}
+
+.manual-flow-card--dark .manual-flow-symbol {
+  color: var(--guide-dark-symbol);
+}
+
+.manual-flow-title {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.manual-flow-card--dark .manual-flow-title {
+  color: var(--guide-dark-title);
+}
+
+.manual-flow-device {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 5px;
+  padding: 3px 6px;
+  background: var(--color-surface-tint);
+  color: var(--color-primary-dark);
+}
+
+.manual-flow-card--highlight .manual-flow-device {
+  background: var(--guide-warn-chip-bg);
+  color: var(--guide-warn-chip-text);
+}
+
+.manual-flow-card--dark .manual-flow-device {
+  background: var(--guide-dark-symbol);
+  color: var(--color-panel-dark-deep);
+}
+
+.manual-flow-desc {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--guide-body);
+}
+
+.manual-flow-desc b {
+  font-weight: 700;
+}
+
+.manual-flow-card--highlight .manual-flow-desc {
+  color: var(--guide-warn-text);
+}
+
+.manual-flow-card--dark .manual-flow-desc {
+  color: var(--guide-dark-desc);
+}
+
+.manual-flow-arrow {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--guide-arrow);
+}
+
+.manual-flow-arrow svg {
+  width: 18px;
+  height: 18px;
+  /* スマホ幅では縦に並ぶため、矢印を下向きにする */
+  transform: rotate(90deg);
+}
+
+/* ---- 下段：確認ポイント3枚 ---- */
+
+.manual-notes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.manual-note {
+  border-radius: 14px;
+  background: var(--guide-note-bg);
+  border: 1px solid var(--guide-note-border);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.manual-note-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.manual-note-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  color: var(--color-primary-dark);
+}
+
+.manual-note-title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.manual-note-desc {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--guide-body);
+}
+
+/* ---- タブレット以上：モックアップ（960×1180）通りの段組みに戻す ---- */
+
+@media (min-width: 768px) {
+  .manual-page {
+    gap: 26px;
+    padding: 34px 36px 32px;
+  }
+
+  .manual-header {
+    gap: 18px;
+    flex-wrap: nowrap;
+  }
+
+  .manual-header-title {
+    font-size: 34px;
+  }
+
+  .manual-header-sub {
+    font-size: 15px;
+  }
+
+  .manual-panel {
+    padding: 22px;
+  }
+
+  .manual-panel-head {
+    flex-wrap: nowrap;
+  }
+
+  .manual-panel-title {
+    font-size: 20px;
+    white-space: nowrap;
+  }
+
+  .manual-steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .manual-help {
+    flex-wrap: nowrap;
+  }
+
+  .manual-flow {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .manual-flow-item {
+    flex-direction: row;
+    flex-basis: 0;
+    align-items: stretch;
+  }
+
+  .manual-flow-arrow svg {
+    transform: none;
+  }
+
+  .manual-notes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---- 中間幅：4ステップを2列に（縦1列だと間延びするため） ---- */
+
+@media (min-width: 480px) and (max-width: 767.98px) {
+  .manual-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .manual-notes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

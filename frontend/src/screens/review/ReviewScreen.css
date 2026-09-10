@@ -67,6 +67,13 @@
   color: #5d7b80;
   font-size: 12px;
   font-weight: 500;
+  cursor: pointer;
+}
+
+.rv-queue-error {
+  font-size: 12px;
+  color: #b3401f;
+  margin: 0;
 }
 
 .rv-queue-tab.is-active {

@@ -78,3 +78,13 @@ def save(questionnaire: Questionnaire) -> None:
         return
 
     _questionnaires[questionnaire.id] = questionnaire
+
+
+def list_all() -> list[Questionnaire]:
+    """受付キュー表示用の全件取得。作成日時の新しい順。"""
+    client = get_supabase()
+    if client is not None:
+        result = client.table(_TABLE).select("*").order("created_at", desc=True).execute()
+        return [Questionnaire(**row) for row in result.data]
+
+    return sorted(_questionnaires.values(), key=lambda q: q.created_at, reverse=True)

@@ -7,7 +7,10 @@ class Settings(BaseSettings):
     `flyctl secrets set`（本番）で与える。ここにキーの値を書かない。
     """
 
-    cors_allow_origins: list[str] = ["http://localhost:5173"]
+    # localhost:5173 = frontend-patient（旧frontend）, localhost:5174 = frontend-staff。
+    # 本番デプロイ後は、実際のVercel URL（患者アプリ・スタッフアプリ両方）を
+    # .env / flyctl secrets の CORS_ALLOW_ORIGINS に追加すること。
+    cors_allow_origins: list[str] = ["http://localhost:5173", "http://localhost:5174"]
 
     # 外部APIキー（未設定の間は各サービスがモック応答にフォールバックする）
     whisper_api_key: str | None = None

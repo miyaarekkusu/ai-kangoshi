@@ -1,0 +1,9 @@
+{
+  "name": "nurselink-ai-workspace",
+  "private": true,
+  "workspaces": [
+    "frontend-shared",
+    "frontend-patient",
+    "frontend-staff"
+  ]
+}

@@ -5,8 +5,10 @@
  * 配色・余白・角丸・フォントサイズはモックアップのインラインCSSの値に一致させている。
  *
  * 動作ロジック（⓪からのsessionStorage受け取り / POST /intake/start・/intake/message /
- * マイク→テキスト入力の暫定UI / done:true で questionnaireId を保存して /review へ /
- * エラー時の再試行）は従来実装のまま維持している。
+ * done:true で questionnaireId を保存して /review へ / エラー時の再試行）は従来実装のまま維持。
+ * マイク入力は useAudioRecorder + /media/transcribe（Whisper API）による実音声認識に置き換え済み。
+ * 質問が届くと /media/speech（TTS）で読み上げる。いずれもAPIキー未設定時は
+ * バックエンドがモック応答/204を返すため、字幕表示のみのフォールバックとして動作する。
  *
  * スコープ: frontend/src/screens/intake/ 配下のみ編集（AGENTS.md 0章）。
  * 質問文言・症状分類ロジックはバックエンド側の事前定義テンプレートに従う（AGENTS.md 3章）。
@@ -14,6 +16,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/api/client";
+import { speakText, transcribeAudio } from "@/api/media";
+import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import { Yui, type YuiExpression } from "@/components/character/Yui";
 import type { IntakeTurn } from "@/types/questionnaire";
 import { LANGUAGES, type LanguageCode } from "@/types/language";
@@ -78,7 +82,7 @@ export default function IntakeScreen() {
   const [turns, setTurns] = useState<IntakeTurn[]>([]);
 
   const [yuiExpression, setYuiExpression] = useState<YuiExpression>("idle");
-  const [isMicPressed, setIsMicPressed] = useState(false);
+  const recorder = useAudioRecorder();
   const [isInputOpen, setIsInputOpen] = useState(false);
   const [draftText, setDraftText] = useState("");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -119,6 +123,7 @@ export default function IntakeScreen() {
       ]);
       setYuiExpression("speaking");
       setLoadState("ready");
+      void speakText(res.questionOriginal);
     } catch (err) {
       console.error("intake/start failed", err);
       setLoadError(UI_COPY[resolveLanguageCode(lang)].connectionError);
@@ -132,6 +137,14 @@ export default function IntakeScreen() {
     }
   }, [language, startIntake]);
 
+  // 録音権限が取れない等でrecorderがエラー状態になったら、その都度バナー表示する。
+  useEffect(() => {
+    if (recorder.status === "error") {
+      setSubmitError(copy.micPermissionError);
+      setYuiExpression("idle");
+    }
+  }, [recorder.status, copy.micPermissionError]);
+
   const openMicPanel = () => {
     setSubmitError(null);
     setIsInputOpen(true);
@@ -142,6 +155,33 @@ export default function IntakeScreen() {
     setIsInputOpen(false);
     setYuiExpression("speaking");
   };
+
+  /** マイクボタン：タップで録音開始、もう一度タップで停止→Whisper APIでテキスト化して入力欄に反映する。 */
+  const handleMicToggle = useCallback(async () => {
+    if (isSubmitting || recorder.status === "processing") return;
+
+    if (recorder.status === "recording") {
+      setYuiExpression("idle");
+      const blob = await recorder.stop();
+      if (!blob) return;
+      setSubmitError(null);
+      try {
+        const text = await transcribeAudio(blob, language ?? undefined);
+        setDraftText(text);
+        setIsInputOpen(true);
+        setYuiExpression("listening");
+      } catch (err) {
+        console.error("transcribe failed", err);
+        setSubmitError(copy.connectionError);
+        setYuiExpression("idle");
+      }
+      return;
+    }
+
+    setSubmitError(null);
+    setYuiExpression("listening");
+    await recorder.start();
+  }, [recorder, language, isSubmitting, copy.connectionError]);
 
   const insertCategoryPhrase = (option: SymptomCategoryOption) => {
     // チップは常時表示なので、入力欄が閉じていればまず開いてから定型文を差し込む。
@@ -192,6 +232,7 @@ export default function IntakeScreen() {
         }
       ]);
       setYuiExpression("speaking");
+      void speakText(res.nextQuestionOriginal ?? "");
     } catch (err) {
       console.error("intake/message failed", err);
       // 送信失敗時は患者の入力内容を保持し、再送信（再試行）できるようにする（AGENTS.md 5章）。
@@ -392,29 +433,23 @@ export default function IntakeScreen() {
                 type="button"
                 className="intake-side-btn"
                 onClick={openMicPanel}
-                disabled={isSubmitting}
+                disabled={isSubmitting || recorder.status !== "idle"}
               >
                 <ListIcon />
                 <span className="intake-side-label">{copy.typeLabel}</span>
               </button>
 
-              {/* TODO: Whisper APIによる音声認識に置き換える。実装時はAGENTS.md 5章のマイク権限要件
-                  （ユーザー操作起点でのみgetUserMediaを呼ぶ）に従うこと。
-                  現時点ではUIのみ（押している間の視覚フィードバック）で、実際の録音・送信は行わず、
-                  タップでテキスト入力欄を開く代替導線にしている。 */}
+              {/* タップで録音開始、もう一度タップで停止しWhisper API（/media/transcribe）でテキスト化する。
+                  AGENTS.md 5章: マイク権限はこのonClick（ユーザー操作）を起点にのみ要求する。 */}
               <div className="intake-mic-wrap">
-                <span className="intake-mic-halo" aria-hidden="true" />
+                {recorder.status === "recording" && <span className="intake-mic-halo" aria-hidden="true" />}
                 <button
                   type="button"
-                  className={`intake-mic-btn${isMicPressed ? " is-pressed" : ""}`}
-                  aria-pressed={isMicPressed}
+                  className={`intake-mic-btn${recorder.status === "recording" ? " is-pressed" : ""}`}
+                  aria-pressed={recorder.status === "recording"}
                   aria-label={copy.micAriaLabel}
-                  disabled={isSubmitting}
-                  onPointerDown={() => setIsMicPressed(true)}
-                  onPointerUp={() => setIsMicPressed(false)}
-                  onPointerLeave={() => setIsMicPressed(false)}
-                  onPointerCancel={() => setIsMicPressed(false)}
-                  onClick={openMicPanel}
+                  disabled={isSubmitting || recorder.status === "processing"}
+                  onClick={handleMicToggle}
                 >
                   <MicIcon />
                   <span className="intake-mic-bars" aria-hidden="true">
@@ -440,7 +475,13 @@ export default function IntakeScreen() {
               </button>
             </div>
 
-            <p className="intake-hint">{copy.tapAndType}</p>
+            <p className="intake-hint">
+              {recorder.status === "recording"
+                ? copy.recordingHint
+                : recorder.status === "processing"
+                  ? copy.transcribing
+                  : copy.tapAndType}
+            </p>
           </>
         ) : (
           <div className="intake-text-panel">

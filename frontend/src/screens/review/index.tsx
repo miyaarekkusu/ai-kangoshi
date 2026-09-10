@@ -13,8 +13,9 @@
  * - 確定後は編集フォームを読み取り専用にし、模擬病院システム登録完了の案内と
  *   PDF（印刷用）を開くボタンを表示する（AGENTS.md 7章／README 機能7）。
  *
- * 左の「受付キュー」は現在の患者以外はデモ表示用の静的プレースホルダー
- * （複数患者の一覧取得APIは未実装。ReviewScreen.css内コメント参照）。
+ * 左の「受付キュー」は GET /questionnaire（全患者一覧）から取得し、
+ * 「確認待ち／登録済み」タブは status（draft/confirmed）で実際にフィルタする。
+ * 「本日の対応言語」の集計は本タスクの範囲外のため静的プレースホルダーのまま。
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api, ApiError } from "@/api/client";
@@ -109,6 +110,21 @@ export default function ReviewScreen() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [ehrRegistered, setEhrRegistered] = useState(false);
 
+  // 受付キュー（現在の患者以外）
+  const [queue, setQueue] = useState<Questionnaire[]>([]);
+  const [queueTab, setQueueTab] = useState<"pending" | "confirmed">("pending");
+  const [queueError, setQueueError] = useState<string | null>(null);
+
+  const loadQueue = useCallback(async () => {
+    try {
+      const list = await api.get<Questionnaire[]>("/questionnaire");
+      setQueue(list);
+      setQueueError(null);
+    } catch {
+      setQueueError("受付キューの取得に失敗しました。");
+    }
+  }, []);
+
   const loadQuestionnaire = useCallback(async () => {
     setIsLoading(true);
     setLoadError(null);
@@ -130,6 +146,10 @@ export default function ReviewScreen() {
   useEffect(() => {
     void loadQuestionnaire();
   }, [loadQuestionnaire]);
+
+  useEffect(() => {
+    void loadQueue();
+  }, [loadQueue]);
 
   const isConfirmed = questionnaire?.status === "confirmed";
   const isReadOnly = isConfirmed || isSaving || isConfirming;
@@ -188,6 +208,7 @@ export default function ReviewScreen() {
       setEhrRegistered(result.ehrRegistered);
       setPdfUrl(result.pdfUrl);
       setActionMessage({ text: "確定しました。", isError: false });
+      void loadQueue();
     } catch (err) {
       setActionMessage({ text: describeError(err), isError: true });
     } finally {
@@ -240,41 +261,64 @@ export default function ReviewScreen() {
         </div>
 
         <div className="rv-queue-tabs">
-          <span className="rv-queue-tab is-active">確認待ち</span>
-          <span className="rv-queue-tab">登録済み</span>
+          <span
+            className={`rv-queue-tab${queueTab === "pending" ? " is-active" : ""}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => setQueueTab("pending")}
+          >
+            確認待ち
+          </span>
+          <span
+            className={`rv-queue-tab${queueTab === "confirmed" ? " is-active" : ""}`}
+            role="button"
+            tabIndex={0}
+            onClick={() => setQueueTab("confirmed")}
+          >
+            登録済み
+          </span>
         </div>
 
         <div className="rv-queue-list">
-          <div className="rv-queue-card is-current">
-            <div className="rv-queue-card-head">
-              <span className="rv-queue-card-id">{questionnaire.patientDisplayId}</span>
-              {receivedAt && <span className="rv-queue-card-time">{receivedAt} 受付</span>}
+          {queueTab === (isConfirmed ? "confirmed" : "pending") && (
+            <div className="rv-queue-card is-current">
+              <div className="rv-queue-card-head">
+                <span className="rv-queue-card-id">{questionnaire.patientDisplayId}</span>
+                {receivedAt && <span className="rv-queue-card-time">{receivedAt} 受付</span>}
+              </div>
+              <div className="rv-queue-card-meta">
+                <GlobeIcon />
+                {questionnaire.patientLanguage}
+                {editedSymptoms[0] ? ` · ${categoryLabel(editedSymptoms[0].category).ja}` : ""}
+              </div>
+              <span className={`rv-queue-chip${isConfirmed ? "" : " is-draft"}`}>{currentQueueChipLabel}</span>
             </div>
-            <div className="rv-queue-card-meta">
-              <GlobeIcon />
-              {questionnaire.patientLanguage}
-              {editedSymptoms[0] ? ` · ${categoryLabel(editedSymptoms[0].category).ja}` : ""}
-            </div>
-            <span className={`rv-queue-chip${isConfirmed ? "" : " is-draft"}`}>{currentQueueChipLabel}</span>
-          </div>
+          )}
 
-          {/* 以下2件はデモ表示用の静的プレースホルダー（他患者一覧APIは未実装） */}
-          <div className="rv-queue-card">
-            <div className="rv-queue-card-head">
-              <span className="rv-queue-card-id">A-015</span>
-              <span className="rv-queue-card-time">10:31 受付</span>
-            </div>
-            <div className="rv-queue-card-meta">中文（簡体） · 腹痛</div>
-            <span className="rv-queue-chip">問診中</span>
-          </div>
-          <div className="rv-queue-card">
-            <div className="rv-queue-card-head">
-              <span className="rv-queue-card-id">A-016</span>
-              <span className="rv-queue-card-time">10:38 受付</span>
-            </div>
-            <div className="rv-queue-card-meta">Tiếng Việt · 発熱</div>
-            <span className="rv-queue-chip is-draft">AIドラフト・未確定</span>
-          </div>
+          {queueError && <p className="rv-queue-error">{queueError}</p>}
+
+          {queue
+            .filter((item) => item.id !== questionnaire.id)
+            .filter((item) => (queueTab === "confirmed" ? item.status === "confirmed" : item.status === "draft"))
+            .map((item) => {
+              const itemReceivedAt = formatClock(item.createdAt);
+              const isItemConfirmed = item.status === "confirmed";
+              const chipLabel = isItemConfirmed ? "確定済み" : item.symptoms.length > 0 ? "AIドラフト・未確定" : "問診中";
+              return (
+                <div key={item.id} className="rv-queue-card">
+                  <div className="rv-queue-card-head">
+                    <span className="rv-queue-card-id">{item.patientDisplayId}</span>
+                    {itemReceivedAt && <span className="rv-queue-card-time">{itemReceivedAt} 受付</span>}
+                  </div>
+                  <div className="rv-queue-card-meta">
+                    <GlobeIcon />
+                    {item.patientLanguage}
+                    {item.symptoms[0] ? ` · ${categoryLabel(item.symptoms[0].category).ja}` : ""}
+                  </div>
+                  <span className={`rv-queue-chip${isItemConfirmed ? "" : " is-draft"}`}>{chipLabel}</span>
+                </div>
+              );
+            })}
         </div>
 
         <div className="rv-queue-langs">

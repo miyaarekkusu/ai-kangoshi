@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Yui } from "@/components/character/Yui";
 import { api, wsUrl } from "@/api/client";
+import { speakText, transcribeAudio } from "@/api/media";
+import { useAudioRecorder } from "@/hooks/useAudioRecorder";
 import type { Questionnaire } from "@/types/questionnaire";
 import "./interpret-session.css";
 
@@ -20,8 +22,11 @@ import "./interpret-session.css";
  * - wsUrl 経由のWebSocket接続・自動再接続（指数バックオフ）
  * - 発話ブロック単位（疑似リアルタイム）での送受信、最新発話の強調表示
  *
- * STT/TTSは未実装（AGENTS.md 2章のPhase区分・5章のマイク権限要件に従い、
- * 実装時はユーザー操作起点でのみ getUserMedia を呼ぶこと）。
+ * STT: useAudioRecorder + /media/transcribe（Whisper API）で実音声認識する。
+ * TTS: 受信した翻訳文を /media/speech で読み上げる。
+ * いずれもAPIキー未設定時はバックエンドがモック応答/204を返すため、
+ * 字幕表示のみのフォールバックとして動作する（AGENTS.md 5章のマイク権限要件に従い、
+ * getUserMediaはユーザー操作起点のonClickからのみ呼ぶ）。
  */
 
 type Speaker = "doctor" | "patient";
@@ -143,10 +148,10 @@ export default function InterpretSessionScreen() {
               id: `${Date.now()}-${prev.length}`,
               speaker: data.speaker as Speaker,
               textOriginal: data.textOriginal ?? "",
-              // TODO(担当エージェント): 受信したtextTranslatedをTTSで読み上げる（未実装。字幕表示のみ）。
               textTranslated: data.textTranslated ?? ""
             }
           ]);
+          void speakText(data.textTranslated ?? "");
         } catch {
           // 不正なメッセージは無視する
         }
@@ -187,13 +192,13 @@ export default function InterpretSessionScreen() {
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages.length]);
 
-  // --- 発話入力（STT未実装のため暫定でテキスト入力） ---
-  // TODO(担当エージェント): 本番は音声入力（Whisper API経由のSTT）に置き換える。
-  // マイク権限はユーザー操作起点で要求すること（AGENTS.md 5章）。
+  // --- 発話入力：マイク録音 → Whisper APIでテキスト化 → 内容確認後に送信 ---
   const [activeSpeaker, setActiveSpeaker] = useState<Speaker | null>(null);
   const [draftText, setDraftText] = useState("");
   const [isPaused, setIsPaused] = useState(false);
   const [isSpeakingNow, setIsSpeakingNow] = useState(false);
+  const recorder = useAudioRecorder();
+  const [recordingSpeaker, setRecordingSpeaker] = useState<Speaker | null>(null);
   const lastMessage = messages[messages.length - 1];
 
   useEffect(() => {
@@ -203,10 +208,34 @@ export default function InterpretSessionScreen() {
     return () => clearTimeout(timer);
   }, [messages.length]);
 
-  function handleOpenSpeaker(speaker: Speaker) {
-    if (isPaused) return;
-    setActiveSpeaker(speaker);
-    setDraftText("");
+  /**
+   * マイクボタン：タップで録音開始、もう一度タップで停止しWhisper API（/media/transcribe）で
+   * テキスト化して発話コンポーザーに反映する（送信前に内容を確認・修正できる）。
+   * 医師＝日本語、患者＝③で選択した通訳言語として認識させる。
+   */
+  async function handleMicButton(speaker: Speaker) {
+    if (isPaused || recorder.status === "processing") return;
+
+    if (recorder.status === "recording" && recordingSpeaker === speaker) {
+      const blob = await recorder.stop();
+      setRecordingSpeaker(null);
+      if (!blob) return;
+      try {
+        const lang = speaker === "doctor" ? "ja" : (interpretLanguage ?? "en");
+        const text = await transcribeAudio(blob, lang);
+        setActiveSpeaker(speaker);
+        setDraftText(text);
+      } catch (err) {
+        console.error("transcribe failed", err);
+      }
+      return;
+    }
+
+    if (recorder.status === "recording") return; // 別の話者が録音中
+
+    setActiveSpeaker(null);
+    setRecordingSpeaker(speaker);
+    await recorder.start();
   }
 
   function handleCancelInput() {
@@ -339,38 +368,53 @@ export default function InterpretSessionScreen() {
             <div className="interpret-mic-row">
               <button
                 type="button"
-                className="interpret-mic"
-                onClick={() => handleOpenSpeaker("doctor")}
-                disabled={isPaused}
+                className={`interpret-mic${recordingSpeaker === "doctor" ? " is-active" : ""}`}
+                onClick={() => handleMicButton("doctor")}
+                disabled={isPaused || recorder.status === "processing" || recordingSpeaker === "patient"}
               >
                 <span className="interpret-mic-icon">
-                  <MicIcon color="#4E7076" />
+                  <MicIcon color={recordingSpeaker === "doctor" ? "#FFFFFF" : "#4E7076"} />
                 </span>
                 <span className="interpret-mic-texts">
                   <span className="interpret-mic-title">医師が話す</span>
-                  <span className="interpret-mic-sub">押している間だけ録音</span>
+                  <span className="interpret-mic-sub">
+                    {recordingSpeaker === "doctor" ? "タップで終了・録音中…" : "タップで録音開始"}
+                  </span>
                 </span>
               </button>
               <button
                 type="button"
-                className={`interpret-mic${activeSpeaker === "patient" ? " is-active" : ""}`}
-                onClick={() => handleOpenSpeaker("patient")}
-                disabled={isPaused}
+                className={`interpret-mic${recordingSpeaker === "patient" ? " is-active" : ""}`}
+                onClick={() => handleMicButton("patient")}
+                disabled={isPaused || recorder.status === "processing" || recordingSpeaker === "doctor"}
               >
                 <span className="interpret-mic-icon">
-                  <MicIcon color={activeSpeaker === "patient" ? "#FFFFFF" : "#4E7076"} />
+                  <MicIcon color={recordingSpeaker === "patient" ? "#FFFFFF" : "#4E7076"} />
                 </span>
                 <span className="interpret-mic-texts">
                   <span className="interpret-mic-title">Patient speaks</span>
-                  <span className="interpret-mic-sub">患者が話す ／ 録音中…</span>
+                  <span className="interpret-mic-sub">
+                    {recordingSpeaker === "patient" ? "タップで終了・録音中…" : "タップで録音開始"}
+                  </span>
                 </span>
               </button>
             </div>
 
+            {recorder.status === "processing" && (
+              <p className="interpret-blocked-note">音声を認識しています…</p>
+            )}
+            {recorder.status === "error" && (
+              <p className="interpret-blocked-note">
+                マイクを使用できませんでした。ブラウザの設定でマイクへのアクセスを許可してください。
+              </p>
+            )}
+
             {activeSpeaker && (
               <div className="interpret-composer">
                 <label className="interpret-composer-label" htmlFor="interpret-draft-text">
-                  {activeSpeaker === "doctor" ? "医師の発話（テキスト入力・暫定）" : "患者の発話（テキスト入力・暫定）"}
+                  {activeSpeaker === "doctor"
+                    ? "医師の発話（内容を確認して送信）"
+                    : "患者の発話（内容を確認して送信）"}
                 </label>
                 <textarea
                   id="interpret-draft-text"

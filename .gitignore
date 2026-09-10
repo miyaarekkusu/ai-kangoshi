@@ -1,9 +1,24 @@
-# frontend
+# frontend (legacy single-app, kept for reference/rollback)
 frontend/node_modules/
 frontend/dist/
 frontend/dev-dist/
 frontend/.env
 frontend/*.tsbuildinfo
+frontend/.vercel
+frontend/.env.local
+
+# npm workspace (frontend-shared / frontend-patient / frontend-staff)
+node_modules/
+frontend-patient/dist/
+frontend-patient/dev-dist/
+frontend-patient/.env
+frontend-patient/*.tsbuildinfo
+frontend-patient/.vercel
+frontend-staff/dist/
+frontend-staff/.env
+frontend-staff/*.tsbuildinfo
+frontend-staff/.vercel
+frontend-shared/*.tsbuildinfo
 
 # backend
 backend/__pycache__/
